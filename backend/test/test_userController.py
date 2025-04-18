@@ -5,18 +5,18 @@ from src.controllers.usercontroller import UserController
 
 import re
 
-@pytest.fixture
-def mock_dao(self):
-    return MagicMock()
-
-@pytest.fixture
-def controller(self, mock_dao):
-    return UserController(dao=mock_dao)
-
 class TestUserController:
     """
     Test for user controller.
     """
+
+    @pytest.fixture
+    def mock_dao(self):
+        return MagicMock()
+
+    @pytest.fixture
+    def controller(self, mock_dao):
+        return UserController(dao=mock_dao)
 
     def test_valid_email_and_user(self, mock_dao, controller):
         """"
