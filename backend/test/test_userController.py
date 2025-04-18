@@ -19,4 +19,22 @@ class TestUserController:
     def controller(mock_dao):
         return UserController(dao=mock_dao)
 
+    def test_valid_email_and_user():
+        ""
+        ""
 
+    def test_invalid_email_with_user():
+        ""
+        ""
+
+    def test_valid_email_with_multiple_user():
+        ""
+        ""
+
+    def test_valid_email_with_no_user():
+        ""
+        ""
+
+    def test_invalid_email_and_user():
+        ""
+        ""
