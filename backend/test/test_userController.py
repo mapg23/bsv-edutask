@@ -62,6 +62,9 @@ class TestUserController:
         assert f"more than one user found with mail {email}" in captured.out
 
     def test_valid_email_with_no_user(self, controller, mock_dao):
+        """
+        Tests with valid email and no users.
+        """
         email = 'username@email.com'
 
         mock_dao.find.return_value = []
@@ -74,6 +77,9 @@ class TestUserController:
         mock_dao.find.assert_called_once_with({'email': email})
 
     def test_invalid_email_and_user(self, controller):
+        """
+        Tests with invalid email and one user.
+        """
         email = 'invalid'
         try:
             controller.get_user_by_email(email)
