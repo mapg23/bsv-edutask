@@ -3,6 +3,8 @@ from unittest.mock import MagicMock, patch
 from bson import ObjectId
 from src.util.dao import DAO
 
+from pymongo.errors import WriteError, DuplicateKeyError
+
 class TestDAO:
     """
     Test for DAO.
@@ -10,7 +12,7 @@ class TestDAO:
 
     @pytest.fixture
     def mock_dao(self):
-    # Patch MongoClient so it doesn't actually connect to MongoDB
+        # Patch MongoClient so it doesn't actually connect to MongoDB
         with patch('src.util.dao.pymongo.MongoClient') as mock_mongo_client:
         # Create a fake collection and set up its behavior
             mock_collection = MagicMock()
@@ -31,25 +33,54 @@ class TestDAO:
             mock_mongo_client.return_value = MagicMock()
             mock_mongo_client.return_value.edutask = mock_db
 
-            # Now create the DAO instance
             dao = DAO(collection_name='testcollection')
 
             return dao
 
     def test_create_valid_user(self, mock_dao):
-        input_data = {'name': 'mocked name', 'active': True}
+        """
+        Test with the right output
+        """
+        input_data = {'name': 'Mocked Name', 'active': True}
 
         result = mock_dao.create(input_data)
 
-        assert result['name'].lower() == 'mocked name'
-        assert result['active'] is True
-        assert '_id' in result
+        assert result == {
+            '_id' : result['_id'],
+            'name': 'Mocked Name',
+            'active': True
+        }
 
-    def test_create_user_invalid_type(self):
-        pass
+    def test_create_user_invalid_type(self, mock_dao):
+        """
+        Tests wrong input type, bool instead of string.
+        """
+
+        invalid_data = {'name': False, 'active': 'Wrong'}
+
+        mock_dao.collection.insert_one.side_effect = WriteError("Invalid type")
+        
+        with pytest.raises(WriteError):
+            mock_dao.create(invalid_data)
     
-    def test_create_user_invalid_duplicate(self):
-        pass
+    def test_create_user_invalid_duplicate(self,mock_dao):
+        """
+        Tests if the users input already exists in the database.
+        """
+        input_data = {'name': 'mocked name', 'active': True}
 
-    def test_create_user_missing_field(self):
-        pass
+        mock_dao.collection.insert_one.side_effect = DuplicateKeyError("A duplicate key error occurred")
+
+        with pytest.raises(DuplicateKeyError):
+            mock_dao.create(input_data)
+
+    def test_create_user_missing_field(self,mock_dao):
+        """
+        Tests if the users input does not contain all the required properties.
+        """
+        input_data = {'active': True}
+
+        mock_dao.collection.insert_one.side_effect = WriteError("Field 'name' is required")
+
+        with pytest.raises(WriteError):
+            mock_dao.create(input_data)
