@@ -26,14 +26,10 @@ class TestUserController:
         mock_user = {"email": email, "name": "User"}
         mock_dao.find.return_value = [mock_user]
 
-        try:
-            result = controller.get_user_by_email(email)
+        result = controller.get_user_by_email(email)
 
-            mock_dao.find.assert_called_once_with({'email': email})
-
-            assert result == mock_user
-        except Exception as e:
-            pytest.fail(f"Testet misslyckades med ett oväntat fel: {e}")
+        mock_dao.find.assert_called_once_with({'email': email})
+        assert result == mock_user
 
     def test_invalid_email_with_user(self, controller, mock_dao):
         """
@@ -69,19 +65,19 @@ class TestUserController:
 
         mock_dao.find.return_value = []
 
-        try:
-            user = controller.get_user_by_email(email)
-        except IndexError as index_error_msg:
-            assert str(index_error_msg) == 'list index out of range'
+        with pytest.raises(IndexError, match="list index out of range"):
+            controller.get_user_by_email(email)
 
         mock_dao.find.assert_called_once_with({'email': email})
 
-    def test_invalid_email_and_user(self, controller):
+
+    def test_invalid_email_and_user(self, controller,mock_dao):
         """
         Tests with invalid email and one user.
         """
         email = 'invalid'
-        try:
+
+        with pytest.raises(ValueError, match="invalid email address"):
             controller.get_user_by_email(email)
-        except ValueError as error_msg:
-            assert str(error_msg) == 'Error: invalid email address'
+
+        mock_dao.find.assert_not_called()
