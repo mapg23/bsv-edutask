@@ -56,7 +56,7 @@ class TestUserController:
         captured = capsys.readouterr()
 
         assert result == user1
-        assert f"more than one user found with mail {email}" in captured.out
+        assert f"Warning: more than one user found with email {email}" in captured.out
 
     def test_valid_email_with_no_user(self, controller, mock_dao):
         """
@@ -66,9 +66,14 @@ class TestUserController:
 
         mock_dao.find.return_value = []
 
-        with pytest.raises(IndexError, match="list index out of range"):
-            controller.get_user_by_email(email)
+        # with pytest.raises(IndexError, match="list index out of range"):
+        #     controller.get_user_by_email(email)
 
+        # mock_dao.find.assert_called_once_with({'email': email})
+
+        result = controller.get_user_by_email(email)
+
+        assert result is None
         mock_dao.find.assert_called_once_with({'email': email})
 
 
