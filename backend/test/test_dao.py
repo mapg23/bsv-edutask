@@ -5,6 +5,7 @@ from src.util.dao import DAO
 
 from pymongo.errors import WriteError, DuplicateKeyError
 
+@pytest.mark.integration
 class TestDAO:
     """
     Test for DAO.

@@ -5,6 +5,7 @@ from src.controllers.usercontroller import UserController
 
 import re
 
+@pytest.mark.unit
 class TestUserController:
     """
     Test for user controller.
