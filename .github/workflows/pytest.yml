@@ -10,6 +10,26 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+
+    services:
+      mongo:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: root
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+    env:
+      MONGO_URL: mongodb://root:root@localhost:27017
+
+
     steps:
       - uses: actions/checkout@v3
 
@@ -31,4 +51,4 @@ jobs:
       - name: Integration Tests
         working-directory: ./backend
         run: |
-          python -m pytest test/test_dao.py
+          python -m pytest -m integration
