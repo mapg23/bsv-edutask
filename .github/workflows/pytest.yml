@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Start services
+      - name: Start Docker compose for integration tests
         run: docker compose up -d mongodb
 
       - name: Set up Python 3.10
