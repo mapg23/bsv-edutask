@@ -30,7 +30,5 @@ jobs:
       
       - name: Integration Tests
         working-directory: ./backend
-        env:
-          MONGO_URL: mongodb://root:root@localhost:27017
         run: |
           python -m pytest -m integration
