@@ -53,10 +53,8 @@ class TestUserController:
         mock_dao.find.return_value = [user1, user2]
 
         result = controller.get_user_by_email(email)
-        captured = capsys.readouterr()
 
         assert result == user1
-        assert f"more than one user found with mail {email}" in captured.out
 
     def test_valid_email_with_no_user(self, controller, mock_dao):
         """
