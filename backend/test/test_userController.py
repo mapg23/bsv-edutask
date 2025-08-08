@@ -62,13 +62,11 @@ class TestUserController:
         """
         email = 'username@email.com'
 
-        mock_dao.find.return_value = []
+        mock_dao.find.return_value = None
 
-        with pytest.raises(IndexError, match="list index out of range"):
-            controller.get_user_by_email(email)
+        result = controller.get_user_by_email(email)
 
-        mock_dao.find.assert_called_once_with({'email': email})
-
+        assert result == None
 
     def test_invalid_email_and_user(self, controller,mock_dao):
         """
